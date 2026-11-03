@@ -151,9 +151,12 @@ def status_html(label, good, detail=""):
     return f'<span class="status-pill {cls}">{label}: {state}{(" · " + detail) if detail else ""}</span>'
 
 def row_age(latest_row):
-    if not latest_row: return False, None, None
+    # None means no trustworthy sample; never treat a missing sample as online.
+    if not latest_row:
+        return None, None, None
     stamp = pd.to_datetime(latest_row[0][1], utc=True, errors="coerce")
-    if pd.isna(stamp): return False, None, None
+    if pd.isna(stamp):
+        return None, None, None
     age = max(0.0, (pd.Timestamp.now(tz="UTC") - stamp).total_seconds())
     try:
         payload = json.loads(latest_row[0][3]) if latest_row[0][3] else {}

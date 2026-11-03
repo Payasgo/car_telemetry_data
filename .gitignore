@@ -1,0 +1,8 @@
+# Local secrets and Python-generated files
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.log
+.DS_Store
