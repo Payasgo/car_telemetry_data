@@ -100,7 +100,13 @@ def start_trip(name, notes=""):
     conn = connect()
     try:
         cur = conn.cursor()
-        cur.execute("SELECT COUNT(*) FROM dbo.TelemetryTrips WHERE Status='active'")
+        # Lock the active-trip key range until commit so concurrent dashboard
+        # requests cannot both pass the active-trip check.
+        cur.execute("""
+            SELECT COUNT(*)
+            FROM dbo.TelemetryTrips WITH (UPDLOCK, HOLDLOCK)
+            WHERE Status='active'
+        """)
         if cur.fetchone()[0]:
             raise RuntimeError("A trip is already active. Stop it before starting another.")
         cur.execute("""
