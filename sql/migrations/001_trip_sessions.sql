@@ -20,3 +20,14 @@ GO
 IF USER_ID(N'ECM\ECM_Repair') IS NOT NULL
     GRANT SELECT, INSERT, UPDATE ON dbo.TelemetryTrips TO [ECM\ECM_Repair];
 GO
+
+/* Enforce a single active session. Safe to re-run. */
+IF NOT EXISTS (
+    SELECT 1 FROM sys.indexes
+    WHERE object_id = OBJECT_ID(N'dbo.TelemetryTrips')
+      AND name = N'UX_TelemetryTrips_OneActive'
+)
+    CREATE UNIQUE INDEX UX_TelemetryTrips_OneActive
+        ON dbo.TelemetryTrips(Status)
+        WHERE Status = 'active';
+GO
