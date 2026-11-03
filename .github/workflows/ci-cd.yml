@@ -5,13 +5,12 @@ on:
     branches:
       - master
       - "fix/**"
+    tags:
+      - "v*"
   pull_request:
     branches:
       - master
   workflow_dispatch:
-  push:
-    tags:
-      - "v*"
 
 permissions:
   contents: read
