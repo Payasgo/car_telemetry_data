@@ -17,7 +17,7 @@ alter table public.telemetry_events
 
 create unique index if not exists telemetry_events_origin_id_uidx
     on public.telemetry_events(origin_id)
-    where origin_id is not null;
+    ;
 
 create index if not exists telemetry_events_owner_created_idx
     on public.telemetry_events(owner_id, created_at desc);
@@ -40,4 +40,3 @@ create policy "Users can read own telemetry"
 -- service_role bypasses RLS; NEVER expose that key in Streamlit Cloud or GitHub.
 
 grant select on public.telemetry_events to authenticated;
-grant usage, select on sequence public.telemetry_events_id_seq to authenticated;
